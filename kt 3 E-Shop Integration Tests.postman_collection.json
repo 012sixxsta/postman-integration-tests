@@ -207,11 +207,12 @@
           "listen": "test",
           "script": {
             "exec": [
-              "pm.test(\"Updated (200 or 201)\", () => {",
+              "pm.test(\"Update request completed (200 or 201)\", function () {",
               "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
               "});",
               "",
-              "pm.test(\"FakeStore API allows empty response body\", () => {",
+              "// FakeStore API может вернуть пустое тело — это допустимо",
+              "pm.test(\"Response body is optional (FakeStore limitation)\", function () {",
               "    pm.expect(true).to.be.true;",
               "});",
               ""
