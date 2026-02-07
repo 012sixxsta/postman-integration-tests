@@ -2,9 +2,7 @@ name: Postman Integration Tests (Newman)
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -18,19 +16,21 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: 18
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install Newman
+        run: npm install -g newman
 
-      - name: Run Postman collection via Newman
+      - name: Run Postman collection
         run: |
           mkdir -p reports
-          npm run test:postman
+          newman run "kt 3 E-Shop Integration Tests.postman_collection.json" \
+            -e "Eshop Lab.postman_environment.json" \
+            --reporters cli,junit \
+            --reporter-junit-export reports/junit.xml
 
-      - name: Upload test report (JUnit)
-        if: always()
+      - name: Upload test report
         uses: actions/upload-artifact@v4
         with:
-          name: newman-junit-report
+          name: postman-report
           path: reports/junit.xml
