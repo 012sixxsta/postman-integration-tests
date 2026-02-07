@@ -208,12 +208,18 @@
           "script": {
             "exec": [
               "pm.test(\"Updated (200 or 201)\", () => {",
-              "  pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
               "});",
               "",
-              "// иногда API возвращает пустое тело — это норм",
-              "pm.test(\"Response body can be empty or JSON\", () => {",
-              "  pm.expect([undefined, null, \"\", \"object\"]).to.include(typeof pm.response.json);",
+              "pm.test(\"Response body can be empty or JSON (FakeStore API)\", () => {",
+              "    const responseText = pm.response.text();",
+              "",
+              "    if (responseText && responseText !== \"null\") {",
+              "        const json = pm.response.json();",
+              "        pm.expect(json).to.be.an(\"object\");",
+              "    } else {",
+              "        pm.expect(responseText === \"\" || responseText === \"null\").to.be.true;",
+              "    }",
               "});",
               ""
             ],
